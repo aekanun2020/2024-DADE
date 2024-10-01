@@ -1,0 +1,40 @@
+
+-- 1.1 จำนวนเงินกู้ทั้งหมดที่อนุมัติและเบิกจ่าย แยกตามปี (issue_d)
+SELECT 
+    i.year,
+    FORMAT(CAST(SUM(CAST(f.funded_amnt AS BIGINT)) AS DECIMAL(38, 2)), 'N2') AS total_funded_amount
+FROM 
+    loans_fact f
+JOIN 
+    issue_d_dim i ON f.issue_d_id = i.issue_d_id
+GROUP BY 
+    i.year
+ORDER BY 
+    i.year;
+
+
+-- 1.2 อัตราดอกเบี้ยเฉลี่ย (int_rate) ของเงินกู้แยกตามปี
+SELECT 
+    i.year,
+    AVG(f.int_rate) AS average_interest_rate
+FROM 
+    loans_fact f
+JOIN 
+    issue_d_dim i ON f.issue_d_id = i.issue_d_id
+GROUP BY 
+    i.year
+ORDER BY 
+    i.year;
+
+-- 1.3 การแจกแจงของสถานะเงินกู้ (loan_status)
+SELECT 
+    ls.loan_status,
+    COUNT(*) AS status_count
+FROM 
+    loans_fact f
+JOIN 
+    loan_status_dim ls ON f.loan_status_id = ls.loan_status_id
+GROUP BY 
+    ls.loan_status
+ORDER BY 
+    status_count DESC;
